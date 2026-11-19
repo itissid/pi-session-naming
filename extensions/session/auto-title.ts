@@ -20,6 +20,7 @@ import {
 	type SessionTitleGenerationConfig,
 } from "../shared/config/index.js";
 import { loadPiConfig } from "../shared/config/index.js";
+import { preserveMeshPrefix } from "./mesh-title.js";
 import {
 	hasTemporaryAutoTitle,
 	markAutoTitle,
@@ -568,6 +569,7 @@ async function generateTitle(
 		}
 
 		const result = parseResult(raw, pending, titleConfig);
+		result.title = preserveMeshPrefix(pi.getSessionName(), result.title);
 		pi.setSessionName(result.title);
 		markAutoTitle(pi, result.title, modelLabel, result.temporary);
 		withActiveUi(ctx, (ui) => {

@@ -60,6 +60,8 @@ pi install npm:@furbyhaxx/pi-session-naming
 --json                   Emit session listing as JSON when listing is active
 ```
 
+If the session has a pi-mesh title (`mesh @alias · rooms — conversation`), `/rename` and `/rename auto` keep the identity prefix and only change the conversation title. The interactive prompt shows only the conversation title; an empty submission leaves a mesh title unchanged.
+
 ## Configuration
 
 Configuration lives in pi's regular `settings.json`.

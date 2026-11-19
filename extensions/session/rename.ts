@@ -5,6 +5,7 @@ import {
 } from "../shared/config/index.js";
 import { loadPiConfig } from "../shared/config/index.js";
 import { runAutoTitleCommand } from "./auto-title.js";
+import { preserveMeshPrefix, splitMeshTitle } from "./mesh-title.js";
 import { markManualTitle } from "./state.js";
 import { emitSessionTitleMessage } from "./title-message.js";
 
@@ -33,7 +34,7 @@ export async function registerSessionRename(pi: ExtensionAPI): Promise<void> {
 			let name = arg;
 			if (!name && config.interactiveWhenEmpty) {
 				const current = pi.getSessionName() ?? "";
-				const input = await ctx.ui.input("Rename session", current);
+				const input = await ctx.ui.input("Rename session", splitMeshTitle(current)?.suffix ?? current);
 				if (input === undefined) return;
 				name = input.trim();
 			}
@@ -47,6 +48,11 @@ export async function registerSessionRename(pi: ExtensionAPI): Promise<void> {
 				return;
 			}
 
+			const current = pi.getSessionName();
+			const mesh = splitMeshTitle(current);
+			// A blank dialog must not remove the mesh identity or revive the preview.
+			if (mesh && (!name || name === mesh.prefix)) return;
+			name = preserveMeshPrefix(current, name);
 			pi.setSessionName(name);
 			markManualTitle(pi, name);
 			emitSessionTitleMessage(
